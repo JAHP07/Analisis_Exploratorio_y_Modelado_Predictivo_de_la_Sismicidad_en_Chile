@@ -23,3 +23,16 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Datos y modelos
+data/raw/
+data/processed/
+models/*.pkl
+models/*.joblib
+*.csv
+*.xlsx
+*.xls
+
+# Cache
+.cache/
+output/
