@@ -9,6 +9,7 @@ import requests
 import pandas as pd
 from datetime import datetime, timedelta
 from typing import Optional
+import os
 
 
 def obtener_datos_sismos(
@@ -99,6 +100,36 @@ def limpiar_datos_sismos(df: pd.DataFrame) -> pd.DataFrame:
     df_limpio = df_limpio.reset_index(drop=True)
     
     return df_limpio
+
+
+def guardar_dataset_analitico(df: pd.DataFrame, save_path: str) -> pd.DataFrame:
+    """
+    Guarda una versión analítica del dataset con campos clave para agrupaciones.
+    
+    Args:
+        df: DataFrame con datos sísmicos limpios.
+        save_path: Ruta destino para archivo CSV.
+    
+    Returns:
+        DataFrame guardado con columnas seleccionadas.
+    """
+    df_export = df.copy()
+    df_export['fecha'] = pd.to_datetime(df_export['fecha'])
+    
+    dataset_analitico = pd.DataFrame({
+        'magnitud': df_export['magnitud'],
+        'fecha': df_export['fecha'].dt.date.astype(str),
+        'hora': df_export['fecha'].dt.strftime('%H:%M:%S'),
+        'latitud': df_export['latitud'],
+        'profundidad_km': df_export['profundidad']
+    })
+    
+    directory = os.path.dirname(save_path)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
+    dataset_analitico.to_csv(save_path, index=False)
+    
+    return dataset_analitico
 
 
 if __name__ == "__main__":

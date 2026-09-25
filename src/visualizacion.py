@@ -35,7 +35,9 @@ def graficar_distribucion_magnitud(
     ax.set_ylabel('Frecuencia')
     
     if save_path:
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        directory = os.path.dirname(save_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
     
     return fig
@@ -68,7 +70,9 @@ def graficar_profundidad_vs_magnitud(
     ax.set_ylabel('Profundidad (km)')
     
     if save_path:
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        directory = os.path.dirname(save_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
     
     return fig
@@ -103,7 +107,43 @@ def graficar_distribucion_geografica(
     plt.tight_layout()
     
     if save_path:
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        directory = os.path.dirname(save_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    
+    return fig
+
+
+def graficar_tasa_semanal(
+    df_tasa_semanal: pd.DataFrame,
+    figsize: Tuple[int, int] = (10, 5),
+    save_path: Optional[str] = None
+) -> plt.Figure:
+    """
+    Genera un gráfico legible de tasa semanal de sismos.
+    
+    Args:
+        df_tasa_semanal: DataFrame con columnas fecha y eventos/tasa_semanal.
+        figsize: Tamaño de la figura (ancho, alto).
+        save_path: Ruta opcional para guardar la imagen.
+    
+    Returns:
+        Figura de matplotlib con el gráfico.
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+    sns.lineplot(data=df_tasa_semanal, x='fecha', y='tasa_semanal', marker='o', ax=ax)
+    ax.set_title('Tasa Semanal de Sismos', fontsize=14)
+    ax.set_xlabel('Semana')
+    ax.set_ylabel('Eventos por semana')
+    ax.grid(alpha=0.3)
+    plt.xticks(rotation=30)
+    plt.tight_layout()
+    
+    if save_path:
+        directory = os.path.dirname(save_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
     
     return fig
@@ -126,12 +166,17 @@ def generar_todas_visualizaciones(
     paths = {
         'distribucion_magnitud': os.path.join(output_dir, 'distribucion_magnitud.png'),
         'profundidad_vs_magnitud': os.path.join(output_dir, 'profundidad_vs_magnitud.png'),
-        'distribucion_geografica': os.path.join(output_dir, 'distribucion_geografica.png')
+        'distribucion_geografica': os.path.join(output_dir, 'distribucion_geografica.png'),
+        'tasa_semanal': os.path.join(output_dir, 'tasa_semanal.png')
     }
     
     graficar_distribucion_magnitud(df, save_path=paths['distribucion_magnitud'])
     graficar_profundidad_vs_magnitud(df, save_path=paths['profundidad_vs_magnitud'])
     graficar_distribucion_geografica(df, save_path=paths['distribucion_geografica'])
+    
+    from src.analisis import calcular_tasa_semanal
+    tasa_semanal = calcular_tasa_semanal(df)
+    graficar_tasa_semanal(tasa_semanal, save_path=paths['tasa_semanal'])
     
     return paths
 
