@@ -2,16 +2,19 @@
 Tests para los módulos del proyecto de análisis sísmico.
 """
 
+import os
 import pytest
 import pandas as pd
 import numpy as np
-from src.extraccion_datos import limpiar_datos_sismos
+from src.extraccion_datos import limpiar_datos_sismos, guardar_dataset_analitico
 from src.analisis import (
     estadistica_descriptiva,
     analizar_relacion_magnitud_profundidad,
     agrupar_sismos,
     analizar_caracteristicas_grupos,
-    generar_resumen_kpi
+    generar_resumen_kpi,
+    calcular_ley_gutenberg_richter,
+    calcular_tasa_semanal
 )
 
 
@@ -64,6 +67,16 @@ class TestExtraccionDatos:
         df = pd.DataFrame(data)
         limpio = limpiar_datos_sismos(df)
         assert len(limpio) == 2
+    
+    def test_guardar_dataset_analitico_columnas_esperadas(self, dataframe_ejemplo, tmp_path):
+        """Verifica que el dataset analítico se guarde con columnas clave."""
+        file_path = tmp_path / "dataset_analitico.csv"
+        resultado = guardar_dataset_analitico(dataframe_ejemplo, str(file_path))
+        
+        assert os.path.exists(file_path)
+        assert list(resultado.columns) == [
+            'magnitud', 'fecha', 'hora', 'latitud', 'profundidad_km'
+        ]
 
 
 class TestAnalisis:
@@ -87,6 +100,8 @@ class TestAnalisis:
         etiquetas, modelo = agrupar_sismos(dataframe_ejemplo, n_grupos=2)
         assert len(etiquetas) == len(dataframe_ejemplo)
         assert len(np.unique(etiquetas)) == 2
+        assert hasattr(modelo, 'scaler_')
+        assert modelo.scaler_ is not None
     
     def test_analizar_caracteristicas_grupos_retorna_dataframe(self, dataframe_ejemplo):
         """Verifica que el análisis de grupos retorne un DataFrame."""
@@ -103,6 +118,23 @@ class TestAnalisis:
         assert 'magnitud_promedio' in kpis
         assert 'magnitud_maxima' in kpis
         assert kpis['total_sismos'] == 5
+    
+    def test_calcular_ley_gutenberg_richter_retorna_parametros(self, dataframe_ejemplo):
+        """Verifica salida esperada de ley Gutenberg-Richter."""
+        resultado = calcular_ley_gutenberg_richter(dataframe_ejemplo)
+        assert isinstance(resultado, dict)
+        assert 'a' in resultado
+        assert 'b' in resultado
+        assert 'r2' in resultado
+        assert 'n_bins' in resultado
+    
+    def test_calcular_tasa_semanal_retorna_dataframe(self, dataframe_ejemplo):
+        """Verifica cálculo de tasa semanal."""
+        tasa = calcular_tasa_semanal(dataframe_ejemplo)
+        assert isinstance(tasa, pd.DataFrame)
+        assert 'fecha' in tasa.columns
+        assert 'eventos' in tasa.columns
+        assert 'tasa_semanal' in tasa.columns
 
 
 if __name__ == "__main__":

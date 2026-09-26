@@ -11,8 +11,10 @@ from src.visualizacion import (
     graficar_distribucion_magnitud,
     graficar_profundidad_vs_magnitud,
     graficar_distribucion_geografica,
+    graficar_tasa_semanal,
     generar_todas_visualizaciones
 )
+from src.analisis import calcular_tasa_semanal
 
 
 @pytest.fixture
@@ -58,10 +60,19 @@ class TestVisualizacion:
         output_dir = str(tmp_path / "output")
         paths = generar_todas_visualizaciones(dataframe_ejemplo, output_dir=output_dir)
         
-        assert len(paths) == 3
+        assert len(paths) == 4
         assert 'distribucion_magnitud' in paths
         assert 'profundidad_vs_magnitud' in paths
         assert 'distribucion_geografica' in paths
+        assert 'tasa_semanal' in paths
+    
+    def test_graficar_tasa_semanal_retorna_figura(self, dataframe_ejemplo):
+        """Verifica que el gráfico de tasa semanal retorne una figura."""
+        df_tasa = calcular_tasa_semanal(dataframe_ejemplo)
+        fig = graficar_tasa_semanal(df_tasa)
+        assert fig is not None
+        assert isinstance(fig, plt.Figure)
+        plt.close(fig)
 
 
 if __name__ == "__main__":

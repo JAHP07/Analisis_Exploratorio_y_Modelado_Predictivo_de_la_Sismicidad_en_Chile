@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from typing import Tuple, Dict, Any
@@ -79,21 +80,32 @@ def analizar_relacion_magnitud_profundidad(df: pd.DataFrame) -> Dict[str, float]
     }
 
 
-def agrupar_sismos(df: pd.DataFrame, n_grupos: int = 3) -> Tuple[np.ndarray, KMeans]:
+def agrupar_sismos(
+    df: pd.DataFrame,
+    n_grupos: int = 3,
+    estandarizar: bool = True
+) -> Tuple[np.ndarray, KMeans]:
     """
     Realiza clustering de sismos basado en magnitud y profundidad.
     
     Args:
         df: DataFrame con los datos sísmicos.
         n_grupos: Número de grupos/clusters a identificar.
+        estandarizar: Si True, aplica estandarización z-score previa al clustering.
     
     Returns:
         Tupla con (etiquetas de grupo, modelo KMeans entrenado).
     """
     features = df[['magnitud', 'profundidad']].values
     
+    scaler = None
+    if estandarizar:
+        scaler = StandardScaler()
+        features = scaler.fit_transform(features)
+    
     kmeans = KMeans(n_clusters=n_grupos, random_state=42, n_init=10)
     labels = kmeans.fit_predict(features)
+    kmeans.scaler_ = scaler
     
     return labels, kmeans
 
@@ -164,6 +176,78 @@ def generar_resumen_kpi(df: pd.DataFrame) -> Dict[str, Any]:
         'region_mas_activa': region_mas_activa,
         'eventos_region_activa': eventos_region_activa
     }
+
+
+def calcular_ley_gutenberg_richter(
+    df: pd.DataFrame,
+    intervalo_magnitud: float = 0.1
+) -> Dict[str, float]:
+    """
+    Calcula parámetros de la ley Gutenberg-Richter: log10(N) = a - bM.
+    
+    Args:
+        df: DataFrame con datos sísmicos.
+        intervalo_magnitud: Tamaño de bin de magnitud para construir N acumulado.
+    
+    Returns:
+        Diccionario con parámetros a, b y ajuste r2.
+    """
+    magnitudes = df['magnitud'].dropna().values
+    if len(magnitudes) < 2:
+        return {'a': np.nan, 'b': np.nan, 'r2': np.nan, 'n_bins': 0}
+    
+    min_mag = np.floor(magnitudes.min() / intervalo_magnitud) * intervalo_magnitud
+    max_mag = np.ceil(magnitudes.max() / intervalo_magnitud) * intervalo_magnitud
+    bins = np.arange(min_mag, max_mag + intervalo_magnitud, intervalo_magnitud)
+    
+    conteos, bordes = np.histogram(magnitudes, bins=bins)
+    conteos_acumulados = np.cumsum(conteos[::-1])[::-1]
+    centros = bordes[:-1] + (intervalo_magnitud / 2)
+    
+    validos = conteos_acumulados > 0
+    x = centros[validos]
+    y = np.log10(conteos_acumulados[validos])
+    
+    if len(x) < 2:
+        return {'a': np.nan, 'b': np.nan, 'r2': np.nan, 'n_bins': int(len(x))}
+    
+    pendiente, intercepto = np.polyfit(x, y, 1)
+    y_pred = pendiente * x + intercepto
+    ss_res = np.sum((y - y_pred) ** 2)
+    ss_tot = np.sum((y - y.mean()) ** 2)
+    r2 = 1 - (ss_res / ss_tot) if ss_tot > 0 else np.nan
+    
+    return {
+        'a': float(intercepto),
+        'b': float(-pendiente),
+        'r2': float(r2),
+        'n_bins': int(len(x))
+    }
+
+
+def calcular_tasa_semanal(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calcula la tasa semanal de ocurrencia de sismos.
+    
+    Args:
+        df: DataFrame con datos sísmicos.
+    
+    Returns:
+        DataFrame con columnas de fecha semanal y eventos.
+    """
+    df_tiempo = df.copy()
+    df_tiempo['fecha'] = pd.to_datetime(df_tiempo['fecha'])
+    
+    serie_semanal = (
+        df_tiempo.set_index('fecha')
+        .resample('W')
+        .size()
+    )
+    
+    tasa_semanal = serie_semanal.rename('eventos').reset_index()
+    tasa_semanal['tasa_semanal'] = tasa_semanal['eventos']
+    
+    return tasa_semanal
 
 
 if __name__ == "__main__":
