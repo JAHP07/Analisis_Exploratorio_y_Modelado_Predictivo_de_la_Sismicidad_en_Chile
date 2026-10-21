@@ -161,3 +161,28 @@ class TestAnalisis:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+
+def test_agrupar_sismos_con_indices_no_consecutivos():
+    # Include a missing value and a non-consecutive integer index.
+    df = pd.DataFrame(
+        {"magnitud": [4.0, None, 5.2, 4.8], "profundidad": [10.0, 20.0, 150.0, 80.0]},
+        index=[10, 20, 40, 70],
+    )
+    etiquetas, _ = agrupar_sismos(df, n_grupos=2)
+    assert len(etiquetas) == len(df)
+    assert etiquetas[1] == -1
+    assert (etiquetas[[0, 2, 3]] >= 0).all()
+
+
+def test_regresion_con_tres_a_cinco_observaciones():
+    for n in (3, 4, 5):
+        df = pd.DataFrame(
+            {
+                "magnitud": [4 + i * 0.2 for i in range(n)],
+                "profundidad": [20 + i * 11 for i in range(n)],
+            }
+        )
+        resultado = analizar_relacion_magnitud_profundidad(df)
+        assert np.isnan(resultado["r2"])
+        assert np.isfinite(resultado["mse"])

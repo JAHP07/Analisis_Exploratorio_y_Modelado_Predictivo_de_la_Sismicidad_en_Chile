@@ -1,0 +1,19 @@
+name: Feature request / Proponer mejora
+description: Sugerir una mejora del pipeline, las pruebas o la documentación
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema u oportunidad
+      description: ¿Qué necesidad real atendería esta mejora?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+      description: Describe el comportamiento esperado y fuentes de datos, si aplican
+    validations:
+      required: true

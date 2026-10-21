@@ -68,7 +68,15 @@ def analizar_relacion_magnitud_profundidad(df: pd.DataFrame) -> dict[str, float]
 
     y_pred = model.predict(x_test)
     mse = mean_squared_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
+    r2 = (
+        r2_score(y_test, y_pred)
+        if len(y_test) >= 2
+        else float("nan")
+        if len(y_test) >= 2
+        else float("nan")
+        if len(y_test) >= 2
+        else float("nan")
+    )
 
     return {
         "correlacion": float(correlation),
@@ -96,7 +104,11 @@ def agrupar_sismos(df: pd.DataFrame, n_grupos: int = 3) -> tuple[np.ndarray, KMe
     labels = kmeans.fit_predict(features)
 
     etiquetas = np.full(len(df), -1)
-    etiquetas[datos.index.to_numpy()] = labels
+    # Preserve row positions independently of the original DataFrame index.
+    posiciones_validas = np.flatnonzero(
+        df[["magnitud", "profundidad"]].notna().all(axis=1).to_numpy()
+    )
+    etiquetas[posiciones_validas] = labels
     return etiquetas, kmeans
 
 
