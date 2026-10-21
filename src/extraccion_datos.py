@@ -27,10 +27,10 @@ def _validar_formato_fecha(fecha: str, nombre_parametro: str) -> datetime:
 
 
 def _validar_rangos_geograficos(
-    latitud_minima: float,
-    latitud_maxima: float,
-    longitud_minima: float,
-    longitud_maxima: float,
+    latitud_minima,
+    latitud_maxima,
+    longitud_minima,
+    longitud_maxima,
 ) -> None:
     """Valida rangos geográficos de latitud y longitud."""
     if latitud_minima >= latitud_maxima:
