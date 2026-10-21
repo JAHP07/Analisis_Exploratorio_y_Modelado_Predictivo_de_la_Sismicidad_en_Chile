@@ -72,9 +72,7 @@ def obtener_datos_sismos(
     """
     if magnitud_minima < 0:
         raise ValueError("magnitud_minima debe ser mayor o igual a 0.")
-    _validar_rangos_geograficos(
-        latitud_minima, latitud_maxima, longitud_minima, longitud_maxima
-    )
+    _validar_rangos_geograficos(latitud_minima, latitud_maxima, longitud_minima, longitud_maxima)
 
     if fecha_inicio is None:
         fecha_inicio = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
@@ -149,9 +147,7 @@ def limpiar_datos_sismos(df: pd.DataFrame) -> pd.DataFrame:
     for columna in ("magnitud", "latitud", "longitud", "profundidad"):
         df_limpio[columna] = pd.to_numeric(df_limpio[columna], errors="coerce")
 
-    df_limpio = df_limpio.dropna(
-        subset=["magnitud", "fecha", "latitud", "longitud", "profundidad"]
-    )
+    df_limpio = df_limpio.dropna(subset=["magnitud", "fecha", "latitud", "longitud", "profundidad"])
     df_limpio = df_limpio[(df_limpio["magnitud"] > 0) & (df_limpio["profundidad"] >= 0)]
 
     return df_limpio.sort_values("fecha").reset_index(drop=True)
