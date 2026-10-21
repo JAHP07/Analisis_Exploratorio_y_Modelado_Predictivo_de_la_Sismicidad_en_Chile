@@ -1,4 +1,4 @@
-# Data Processing
+# Data processing
 requests>=2.31.0
 pandas>=2.2.0
 numpy>=1.26.0
@@ -7,10 +7,11 @@ numpy>=1.26.0
 matplotlib>=3.8.0
 seaborn>=0.13.0
 
-# Machine Learning
+# Machine learning
 scikit-learn>=1.4.0
 
-# Development & Testing
+# Development & testing
 pytest>=8.0.0
+ruff>=0.6.0
 notebook>=7.1.0
 jupyter>=1.0.0

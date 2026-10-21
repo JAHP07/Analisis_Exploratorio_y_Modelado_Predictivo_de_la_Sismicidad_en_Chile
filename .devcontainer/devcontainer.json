@@ -1,14 +1,15 @@
 {
-    "name": "Analisis Sismico Chile - Codespace",
-    "image": "mcr.microsoft.com/devcontainers/python:3.14",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-toolsai.jupyter",
-                "ms-python.python",
-                "ms-python.vscode-pylance"
-            ]
-        }
-    },
-    "postCreateCommand": "pip install -r requirements.txt"
+  "name": "Analisis Sismico Chile - Codespace",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-toolsai.jupyter",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff"
+      ]
+    }
+  },
+  "postCreateCommand": "python -m pip install --upgrade pip && pip install -r requirements.txt"
 }

@@ -1,172 +1,201 @@
 # 🌋 Análisis Exploratorio y Modelado Predictivo de la Sismicidad en Chile
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/JAHP07/An-lisis-Exploratorio-y-Modelado-Predictivo-de-Datos-S-smicos-en-Chile/actions/workflows/ci.yml/badge.svg)](https://github.com/JAHP07/An-lisis-Exploratorio-y-Modelado-Predictivo-de-Datos-S-smicos-en-Chile/actions)
+[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/JAHP07/Analisis_Exploratorio_y_Modelado_Predictivo_de_la_Sismicidad_en_Chile/actions/workflows/ci.yml/badge.svg)](https://github.com/JAHP07/Analisis_Exploratorio_y_Modelado_Predictivo_de_la_Sismicidad_en_Chile/actions/workflows/ci.yml)
 
-**Proyecto de portafolio — EDA, Machine Learning y visualización de datos sísmicos**
-
-Este proyecto demuestra habilidades profesionales de un/a **Data Analyst / ML Engineer Jr.** mediante un análisis integral de la sismicidad en Chile. Incluye un pipeline automatizado que extrae y limpia datos desde APIs públicas, realiza análisis exploratorio, aplica modelos de aprendizaje automático y genera visualizaciones interactivas y estáticas útiles para la toma de decisiones y el monitoreo.
-
----
-
-## 📊 Dashboard ejecutivo — KPIs principales
-
-| Métrica | Valor |
-|---------|-------|
-| **Total de sismos analizados** | 820 eventos |
-| **Magnitud promedio** | 4.39 |
-| **Magnitud máxima** | 6.9 |
-| **Profundidad promedio** | 102.09 km |
-| **Eventos de magnitud alta (≥ 6.0)** | 4 eventos |
-| **Sismos superficiales (< 70 km)** | 299 eventos (36 %) |
-| **Región más activa** | Plataforma frente a Aysén, Chile |
+> **ES**: Proyecto open source para extraer, limpiar, analizar y visualizar sismicidad observada en Chile usando datos públicos de USGS.
+>
+> **EN**: Open-source project to extract, clean, analyze, and visualize observed seismicity in Chile using public USGS data.
 
 ---
 
-## 🎯 Principales hallazgos y conclusiones
+## 1) Objetivo del proyecto / Project goal
 
-### Hallazgos principales
+**ES**
+- Implementar un pipeline reproducible de análisis sísmico (ETL + EDA + modelado exploratorio + visualización).
+- Facilitar aprendizaje práctico en ciencia de datos, calidad de código y colaboración open source.
+- Entregar resultados transparentes y trazables con documentación clara.
 
-1. **Distribución de magnitudes**: El 94.4 % de los eventos se sitúan entre 4.0 y 5.0, lo que sugiere actividad habitual durante el periodo analizado y ausencia de eventos catastróficos.
-
-2. **Relación magnitud–profundidad**: La correlación es prácticamente nula (≈ -0.03), por lo que la profundidad no resulta un predictor útil de la magnitud en este conjunto de datos.
-
-3. **Clustering**: K‑Means identifica 3 grupos relevantes:
-   - Grupo 0: sismos profundos (≈ 204 km) — zona de subducción.
-   - Grupo 1: sismos superficiales (≈ 27 km) — fallas cercanas a la costa.
-   - Grupo 2: sismos intermedios (≈ 117 km) — actividad tectónica típica.
-
-4. **Valor de negocio**: El pipeline permite automatizar el monitoreo y acelerar el análisis de eventos, lo que facilita la integración en sistemas de alerta temprana o tableros operativos.
+**EN**
+- Provide a reproducible seismic analysis pipeline (ETL + EDA + exploratory modeling + visualization).
+- Support practical learning in data science, code quality, and open-source collaboration.
+- Deliver transparent, traceable outputs with clear documentation.
 
 ---
 
-## 🖼️ Visualizaciones generadas
+## 2) Alcance científico y limitaciones / Scientific scope and limitations
 
-### Distribución de magnitudes
+**ES**
+- Este repositorio analiza **sismicidad histórica observada**, no predice terremotos de forma determinista.
+- Los modelos de regresión y clustering se usan con fines exploratorios.
+- La calidad de resultados depende de la cobertura y calidad de datos reportados por fuentes oficiales.
 
-![Distribución de Magnitudes](output/magnitude_distribution.png)
-
-*La mayoría de los eventos se concentran entre 4.0 y 4.5; la distribución presenta sesgo positivo.*
-
-### Profundidad vs Magnitud
-
-![Profundidad vs Magnitud](output/depth_vs_magnitude.png)
-
-*No se aprecia una relación clara entre profundidad y magnitud (R² ≈ 0), lo que refuerza la independencia entre estas variables.*
-
-### Distribución geográfica
-
-![Distribución Geográfica](output/geographic_distribution.png)
-
-*Los epicentros se alinean con la zona de subducción de Nazca, concentrándose aproximadamente entre -17° y -37° de latitud.*
+**EN**
+- This repository analyzes **historical observed seismicity**; it is not an earthquake prediction system.
+- Regression and clustering are exploratory tools.
+- Result quality depends on official-source data quality and coverage.
 
 ---
 
-## 🛠️ Tecnologías y dependencias
+## 3) Arquitectura técnica / Technical architecture
 
-| Categoría | Tecnologías |
-|-----------|-------------|
-| **Lenguaje** | Python 3.8+ |
-| **Análisis de datos** | pandas, NumPy |
-| **Visualización** | Matplotlib, Seaborn |
-| **Machine Learning** | scikit-learn (regresión, K‑Means) |
-| **Integración con APIs** | requests (USGS) |
-| **Testing** | pytest |
-| **Entorno** | GitHub Codespaces, Jupyter Notebooks |
-| **Calidad de código** | docstrings, type hints, tests unitarios |
-
----
-
-## 📁 Estructura del proyecto
-
+```text
+USGS API (GeoJSON)
+   │
+   ├─ src/extraccion_datos.py
+   │    ├─ obtener_datos_sismos()
+   │    └─ limpiar_datos_sismos()
+   │
+   ├─ src/analisis.py
+   │    ├─ estadistica_descriptiva()
+   │    ├─ analizar_relacion_magnitud_profundidad()
+   │    ├─ agrupar_sismos()
+   │    └─ generar_resumen_kpi()
+   │
+   ├─ src/visualizacion.py
+   │    ├─ graficar_distribucion_magnitud()
+   │    ├─ graficar_profundidad_vs_magnitud()
+   │    ├─ graficar_distribucion_geografica()
+   │    └─ generar_todas_visualizaciones()
+   │
+   └─ output/*.png
 ```
-├── src/                          # Código modularizado
-│   ├── __init__.py               # Paquete principal
-│   ├── extraccion_datos.py       # ETL: Extracción y limpieza
-│   ├── visualizacion.py          # Gráficos profesionales
-│   └── analisis.py               # Estadísticas + ML
-├── tests/                        # Tests unitarios
-│   ├── test_analisis.py          # Tests de extracción y análisis
-│   └── test_visualizacion.py     # Tests de visualización
+
+---
+
+## 4) Tecnologías / Stack
+
+- Python 3.12
+- pandas, NumPy
+- scikit-learn
+- matplotlib, seaborn
+- pytest
+- Ruff
+- GitHub Actions + Dev Containers/Codespaces
+
+---
+
+## 5) Estructura del repositorio / Repository layout
+
+```text
+.
+├── src/
+├── tests/
 ├── notebooks/
-│   └── analisis_sismico.ipynb    # Notebook principal ejecutable
-├── output/                       # Resultados generados
-│   ├── magnitude_distribution.png
-│   ├── depth_vs_magnitude.png
-│   └── geographic_distribution.png
-├── .github/workflows/ci.yml      # CI: pytest automático
-├── .devcontainer/                # Configuración Codespaces
-├── .gitignore                    # Archivos ignorados
-├── LICENSE                       # Licencia MIT
-├── requirements.txt              # Dependencias
-└── README.md                     # Este archivo
+├── output/
+├── .github/workflows/ci.yml
+├── .devcontainer/devcontainer.json
+├── requirements.txt
+├── pyproject.toml
+└── README.md
 ```
 
 ---
 
-## 🔬 Funcionalidades de Machine Learning
+## 6) Instalación local (ES)
 
-### 1. Regresión lineal
-- **Objetivo**: evaluar si la profundidad permite predecir la magnitud.
-- **Resultado**: R² ≈ -0.005 — no hay relación predictiva útil.
-- **Conclusión**: la profundidad no es una variable adecuada para predecir magnitud en este dataset.
+```bash
+git clone https://github.com/JAHP07/Analisis_Exploratorio_y_Modelado_Predictivo_de_la_Sismicidad_en_Chile.git
+cd Analisis_Exploratorio_y_Modelado_Predictivo_de_la_Sismicidad_en_Chile
+python -m venv .venv
+source .venv/bin/activate  # En Windows: .venv\Scripts\activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-### 2. K‑Means (clustering)
-- **Objetivo**: detectar patrones y segmentos en la sismicidad.
-- **Variables**: magnitud y profundidad.
-- **Resultado**: 3 clusters óptimos (validado con método elbow).
-- **Aplicación**: segmentación de eventos para análisis y alertas operativas.
+## 7) Local setup (EN)
 
----
-
-## 📈 Métricas de calidad de código y tests
-
-| Métrica | Valor |
-|---------|-------|
-| **Cobertura de tests** | 12 tests passing |
-| **Docstrings** | Documentación completa en funciones |
-| **Type hints** | Implementados en los módulos principales |
-| **Modularización** | Módulos separados por responsabilidad |
-| **Linting** | 0 errores reportados |
+```bash
+git clone https://github.com/JAHP07/Analisis_Exploratorio_y_Modelado_Predictivo_de_la_Sismicidad_en_Chile.git
+cd Analisis_Exploratorio_y_Modelado_Predictivo_de_la_Sismicidad_en_Chile
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
 ---
 
-## 💼 Habilidades demostradas (relevantes para RR.HH.)
+## 8) Uso rápido / Quick usage
 
-Este proyecto evidencia competencias clave para roles de **Data Analyst Jr.** y **ML Engineer Jr.**:
+```python
+from src.extraccion_datos import obtener_datos_sismos, limpiar_datos_sismos
+from src.analisis import generar_resumen_kpi
+from src.visualizacion import generar_todas_visualizaciones
 
-✅ **ETL Pipeline**: Extracción, transformación y carga de datos desde APIs  
-✅ **Análisis Exploratorio (EDA)**: Estadísticas descriptivas, correlaciones  
-✅ **Machine Learning**: Regresión, clustering, evaluación de modelos  
-✅ **Visualización**: Gráficos profesionales con storytelling  
-✅ **Ingeniería de Software**: Tests, modularización, versionado  
-✅ **Comunicación**: Insights accionables, dashboard ejecutivo  
-✅ **DevOps Básico**: DevContainer, requirements, estructura profesional
-
----
-
-## 🔗 Enlaces de interés
-
-- [Ver notebook ejecutable en Google Colab](https://colab.research.google.com/github/JAHP07/An-lisis-Exploratorio-y-Modelado-Predictivo-de-Datos-S-smicos-en-Chile/blob/main/notebooks/analisis_sismico.ipynb)
-- [Documentación — USGS API](https://earthquake.usgs.gov/fdsnws/event/1/)
+df = obtener_datos_sismos(fecha_inicio="2025-01-01", fecha_fin="2025-12-31", magnitud_minima=4.0)
+df = limpiar_datos_sismos(df)
+print(generar_resumen_kpi(df))
+print(generar_todas_visualizaciones(df, output_dir="output"))
+```
 
 ---
 
-## 📄 Licencia
+## 9) Notebooks
 
-Proyecto con licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
-
----
-
-## 👤 Autor
-
-**Jonathan Huenuanca** — Ingeniero en Informática  
-Proyecto desarrollado como demostración de habilidades en análisis de datos y machine learning.
-
-- [GitHub](https://github.com/JAHP07)
-- [LinkedIn](https://www.linkedin.com/in/jonathanhuenuanca)
+- Notebook principal: [`notebooks/analisis_sismico.ipynb`](notebooks/analisis_sismico.ipynb)
+- Colab: <https://colab.research.google.com/github/JAHP07/Analisis_Exploratorio_y_Modelado_Predictivo_de_la_Sismicidad_en_Chile/blob/main/notebooks/analisis_sismico.ipynb>
 
 ---
 
-*Última actualización: Junio 2026*
+## 10) Visualizaciones existentes
+
+- ![Distribución de Magnitudes](output/magnitude_distribution.png)
+- ![Profundidad vs Magnitud](output/depth_vs_magnitude.png)
+- ![Distribución Geográfica](output/geographic_distribution.png)
+
+---
+
+## 11) Pruebas y calidad / Testing and quality
+
+```bash
+ruff check .
+ruff format --check .
+pytest -v
+```
+
+CI ejecuta estas verificaciones en pushes y pull requests hacia `main`.
+
+---
+
+## 12) GitHub Codespaces
+
+El repositorio incluye `.devcontainer/devcontainer.json` compatible con Python 3.12.
+Al abrir un Codespace, se instala automáticamente `requirements.txt`.
+
+---
+
+## 13) Contribuciones / Contributing
+
+Consulta:
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- [SECURITY.md](SECURITY.md)
+- [Plantilla de PR](.github/pull_request_template.md)
+
+Etiquetas sugeridas para colaboración:
+- `good first issue`
+- `help wanted`
+- `bug`
+- `documentation`
+
+---
+
+## 14) Fuentes de datos oficiales / Official data sources
+
+- USGS Earthquake Catalog API: <https://earthquake.usgs.gov/fdsnws/event/1/>
+
+---
+
+## 15) Uso responsable de IA / Responsible AI use
+
+Este proyecto puede usar asistencia de IA para tareas de apoyo en código y documentación.
+Todo cambio debe ser revisado por personas antes de aprobarse y fusionarse.
+
+---
+
+## 16) Licencia y créditos / License and credits
+
+- Licencia: [MIT](LICENSE)
+- Autor: [JAHP07](https://github.com/JAHP07)
