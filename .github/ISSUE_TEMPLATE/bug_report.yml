@@ -1,0 +1,24 @@
+name: Bug report / Reportar error
+description: Reportar un error reproducible en el análisis sísmico
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción del problema
+      description: Explica qué ocurrió y qué esperabas
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Pasos para reproducir
+      description: Añade un ejemplo mínimo sin secretos ni datos privados
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Entorno
+      placeholder: Python 3.12, sistema operativo, versión de dependencias
