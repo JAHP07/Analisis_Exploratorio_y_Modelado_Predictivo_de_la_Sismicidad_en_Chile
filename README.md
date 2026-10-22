@@ -199,3 +199,10 @@ Todo cambio debe ser revisado por personas antes de aprobarse y fusionarse.
 
 - Licencia: [MIT](LICENSE)
 - Autor: [JAHP07](https://github.com/JAHP07)
+
+
+---
+
+## 17) PostgreSQL y SQL / PostgreSQL and SQL
+
+Laboratorio de ingeniería de datos: carga incremental de eventos USGS a PostgreSQL mediante identificadores oficiales y consultas SQL. Consulta la [guía de fase 2](docs/FASE2_POSTGRESQL.md).
