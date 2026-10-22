@@ -36,3 +36,6 @@ models/*.joblib
 # Cache
 .cache/
 output/
+
+# Credenciales PostgreSQL locales (no versionar)
+.env
